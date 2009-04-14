@@ -2,6 +2,7 @@ require 'rubygems'
 require 'haml'
 require 'hpricot'
 require 'builder'
+require 'open-uri'
 require 'sinatra' unless defined?(Sinatra)
 
 
