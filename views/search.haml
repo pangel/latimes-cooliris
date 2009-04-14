@@ -11,12 +11,13 @@
     
     %form{:method => "get", :action => "/"}
     
-    %label Please enter a term to see relevant photos from the LA Times archives
-    %input#search{:type => "text", :name => "q", :value => @q}
-    
+      %label Please enter a term to see relevant photos from the LA Times archives
+      %input#search{:type => "text", :name => "q", :value => @q}
+      %input{:type => "submit", :value => "search"}
     - if !@q.empty?
       %p#legend>
         %span 
           You can see the results in Cool Iris or with 
-          %a{:href => "javascript:PicLensLite.start();"} PicLens
+          %a{:href => "javascript:PicLensLite.start();"} PicLens 
+          (the link will work after a few seconds)
     %script{:type => "text/javascript", :src => "http://lite.piclens.com/current/piclens.js"}
