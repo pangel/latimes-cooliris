@@ -6,15 +6,20 @@ configure do
 end
 
 helpers do
-  def parse_request(query)
+  def parse_request(query,page)
     elements = []
-    doc =   Hpricot(open("http://unitproj.library.ucla.edu/dlib/lat/search.cfm?k=#{query}&w=none&x=title&y=none&z=none&s=2"))
+    @req = "http://unitproj.library.ucla.edu/dlib/lat/search.cfm?k=#{query}&w=none&x=title&y=none&z=none&s=#{page}"
+    doc =   Hpricot(open @req)
     el = (doc/'a[@href^="display.cfm"]').each do |e|
       elements << e if (not e.at("img").nil?)
     end
-    elements.map do |a|
+    elements.map! do |a|
       [a.at("img")[:src],a.following_siblings[1].inner_text]
     end
+  end
+  
+  def rss_url(q,p)
+    "/rss?q=#{q}&p=#{p}"
   end
 end
 
@@ -23,18 +28,23 @@ before do
 end
 
 get '/' do
-  @q = params["q"].nil? ? "" : params["q"]
-  @rss_postfix = @q.empty? ? "" : "?q=#{@q}"
+  @q = params["q"] || ""
+  @p = params["p"] || 1
+  @rss_url = rss_url @q, @p
   haml :search
 end
 
 get '/rss' do
-  content = parse_request(params["q"])
-  
+  q,p = params["q"], params["p"]
+  pn = p.to_i
+  content = parse_request(q,p)
+
   x = Builder::XmlMarkup.new(:indent=>2)
   x.instruct!
   x << '<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss"   xmlns:atom="http://www.w3.org/2005/Atom">'
   x.channel {
+    x.atom :link, {"rel" => "previous", "href" => rss_url(q,pn-1)} unless pn <= 1
+    x.atom :link, {"rel" => "next", "href" => rss_url(q, pn+1)}
     x.title "UCLA!"
     x.language "en-US"
     content.each { |pic|
