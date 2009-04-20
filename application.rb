@@ -7,19 +7,48 @@ end
 
 helpers do
   def parse_request(query,page)
+
+    tmp_file = File.join(TMP_FOLDER, "#{query}#{page}")
+
+    if File.exist? tmp_file
+      File.open(tmp_file) do |file|
+        @file = true
+        return Marshal.load file
+      end
+    end
+
     elements = []
     @req = "http://unitproj.library.ucla.edu/dlib/lat/search.cfm?k=#{query}&w=none&x=title&y=none&z=none&s=#{page}"
-    doc =   Hpricot(open @req)
-    el = (doc/'a[@href^="display.cfm"]').each do |e|
-      elements << e if (not e.at("img").nil?)
+    doc = Hpricot(open @req)
+    (doc/'a[@href^="display.cfm"]').each do |el|
+      elements << el if (not el.at("img").nil?)
     end
-    elements.map! do |a|
-      [a.at("img")[:src],a.following_siblings[1].inner_text]
+    elements.map! do |el|
+      {:src => el.at("img")[:src], :legend => el.following_siblings[1].inner_text }
     end
+
+    File.open tmp_file, "w" do |file|
+      Marshal.dump elements, file
+    end
+
+    return elements
   end
   
   def rss_url(q,p)
-    "/rss?q=#{q}&p=#{p}"
+    "/rss?" + build_query(:q => q, :p => p)
+  end
+
+  # From http://github.com/cschneid/irclogger/blob/master/lib/partials.rb
+  def partial(template, *args)
+    options = *args
+    options.merge!(:layout => false)
+    if collection = options.delete(:collection) then
+      collection.inject([]) do |buffer, member|
+        buffer << haml(template, options.merge(:layout => false, :locals => {template.to_sym => member}))
+    end.join("\n")
+    else
+      haml(template, options)
+    end
   end
 end
 
@@ -28,10 +57,10 @@ before do
 end
 
 get '/' do
-  @q = params["q"] || ""
-  @p = params["p"] || 1
-  @rss_url = rss_url @q, @p
-  haml :search
+  q = params["q"] || ""
+  p = params["p"] || 1
+  @results = parse_request(q,p) unless q.empty?
+  haml :search, :locals => {:q => q, :p => p}
 end
 
 get '/rss' do
@@ -49,10 +78,10 @@ get '/rss' do
     x.language "en-US"
     content.each { |pic|
       x.item {
-        x.title pic[1]
-        x.link pic[0].sub(/i\.gif/, "j.jpg")
-        x.media :thumbnail, {"url"=>pic[0], "type" => "image/gif"}
-        x.media :content, {"url"=>pic[0].sub(/i\.gif/, "j.jpg"), "type" => "image/jpeg"}
+        x.title pic[:legend]
+        x.link pic[:src].sub(/i\.gif/, "j.jpg")
+        x.media :thumbnail, {"url"=>pic[:src], "type" => "image/gif"}
+        x.media :content, {"url"=>pic[:src].sub(/i\.gif/, "j.jpg"), "type" => "image/jpeg"}
       }
     }
   }

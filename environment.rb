@@ -8,13 +8,14 @@ require 'sinatra' unless defined?(Sinatra)
 
 
 configure do
-  #Constants
+  # Constants
   PROJECT_NAME = "lat-iris"
+  TMP_FOLDER = "#{File.dirname(__FILE__)}/tmp"
   
-  # load models and extensions
+  # Load extensions
   $LOAD_PATH.unshift("#{File.dirname(__FILE__)}/lib")
   Dir.glob("#{File.dirname(__FILE__)}/lib/*.rb") { |lib| require File.basename(lib, '.*') }
-  
+
 end
 
 configure :development do

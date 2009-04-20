@@ -4,7 +4,7 @@
     %meta{'http-equiv' => "Content-type", :content => "text/html;charset=utf-8"}/
     %link{:href =>"/stylesheets/reset.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}	
     %link{:href => "/stylesheets/style.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}
-    %link{:rel => "alternate", :href => @rss_url, :type => "application/rss+xml", :title => "", :id => "gallery"}
+    %link{:rel => "alternate", :href => rss_url(q,p), :type => "application/rss+xml", :title => "", :id => "gallery"}
   %title Changing Times
   %body
     %h1 Search UCLA's Changing Times collection
@@ -14,10 +14,12 @@
       %label Please enter a term to see relevant photos from the LA Times archives
       %input#search{:type => "text", :name => "q", :value => @q}
       %input{:type => "submit", :value => "search"}
-    - if !@q.empty?
+    - if !q.empty?
+      = partial :result, {:collection => @results}
       %p#legend>
         %span 
           You can see the results in Cool Iris or with 
           %a{:href => "javascript:PicLensLite.start();"} PicLens 
           (the link will work after a few seconds)
+    %p= "FROM FILE" if @file
     %script{:type => "text/javascript", :src => "http://lite.piclens.com/current/piclens.js"}
