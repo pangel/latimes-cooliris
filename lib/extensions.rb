@@ -5,7 +5,6 @@ module ApplicationHelpers
 
     if File.exist? tmp_file
       File.open(tmp_file) do |file|
-        @file = true
        return(Marshal.load file)
       end
     end
