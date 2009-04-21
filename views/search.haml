@@ -1,10 +1,13 @@
 - unless (@q.nil? or @q.empty?)
   #navigation
-    - if @p == 1
-      %span.disabled Previous page
+    - if @results.empty?
+      %span.disabled No results
     - else
-      %a{:href => url('', :q => @q, :p => @p-1)} Previous page
-    %a{:href => url('', :q => @q, :p => @p+1)} Next page
+      - if @p == 1
+        %span.disabled Previous page
+      - else
+        %a{:href => url('', :q => @q, :p => @p-1)} Previous page
+      %a{:href => url('', :q => @q, :p => @p+1)} Next page
   = partial :result, :collection => @results
   %p#legend>
     %span
