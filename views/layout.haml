@@ -1,0 +1,17 @@
+!!!
+%html
+  %head
+    %meta{'http-equiv' => "Content-type", :content => "text/html;charset=utf-8"}/
+    %link{:href =>"/stylesheets/reset.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "/stylesheets/style.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}
+    %link{:rel => "alternate", :href => url('rss', :q => @q,:p => @p), :type => "application/rss+xml", :title => "", :id => "gallery"}
+  %title Changing Times
+  %body
+    %h1 Search UCLA's Changing Times collection
+
+    %form{:method => "get", :action => "/"}
+
+      %label Please enter a term to see relevant photos from the LA Times archives
+      %input#search{:type => "text", :name => "q", :value => @q}
+      %input{:type => "submit", :value => "search"}
+      = yield

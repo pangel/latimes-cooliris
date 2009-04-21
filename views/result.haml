@@ -1,1 +1,2 @@
-%img{:src => result[:src]}
+%a.result{:href => url('img', :q => @q, :n => (@p*10 + _counter), :anchor => 'search')}
+  %img{:src => result[:thumb]}

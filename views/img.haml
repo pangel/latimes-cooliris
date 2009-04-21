@@ -1,0 +1,8 @@
+#navigation
+  - if n == 10
+    %span.disabled Previous
+  - else
+    %a{:href => url('img', :q => q, :n => n-1, :anchor => 'search')} Previous
+  %a{:href => url('img', :q => q, :n => (n+1), :anchor => 'search')} Next
+%img{:src => @img[:large]}
+%p#legend= @img[:legend]
