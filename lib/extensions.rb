@@ -1,5 +1,6 @@
 module ApplicationHelpers
   def parse_request(query,page)
+    query = escape(query)
     tmp_file = File.join(TMP_FOLDER, "#{query}#{page}")
 
     if File.exist? tmp_file
