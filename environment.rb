@@ -9,7 +9,7 @@ require 'sinatra' unless defined?(Sinatra)
 
 configure do
   # Constants
-  PROJECT_NAME = "lat-iris"
+  PROJECT_NAME = "latimes-cooliris"
   TMP_FOLDER = "#{File.dirname(__FILE__)}/tmp"
   
   # Load extensions
