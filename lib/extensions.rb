@@ -5,13 +5,13 @@ module ApplicationHelpers
     if File.exist? tmp_file
       File.open(tmp_file) do |file|
         @file = true
-       return Marshal.load file
+       return(Marshal.load file)
       end
     end
 
     elements = []
     @req = "http://unitproj.library.ucla.edu/dlib/lat/search.cfm?k=#{query}&w=none&x=title&y=none&z=none&s=#{page}"
-    doc = Hpricot(open @req)
+    doc = Hpricot open(@req)
     (doc/'a[@href^="display.cfm"]').each do |el|
       elements << el if (not el.at("img").nil?)
     end
